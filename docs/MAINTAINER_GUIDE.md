@@ -5,6 +5,17 @@ committing, pushing, and publishing to npm. Commands are meant to be pasted into
 
 `MAINTAINING.md` (repo root) is the short policy version. This guide is the step-by-step one.
 
+> **The four mistakes that matter most**
+> 1. **Building `example/` inside this repo rewrites three tracked files with real key material**
+>    (`cpp/encrypted_functions.h`, `cpp/password_functions.h`,
+>    `android/src/main/java/com/reactnativekeysjsi/PrivateKey.java`). Never commit them and never
+>    publish while they're modified. Section 5 shows how to put them back.
+> 2. **Don't run `npm run release`.** It's the original project's release-it script: it rewrites
+>    `CHANGELOG.md` in another format and needs a GitHub token. Use the steps in section 7.
+> 3. **Commit as `prithin123@gmail.com` only**, never the work email.
+> 4. **When `npm publish` says "Press ENTER", do it right away.** The sign-in link expires after a
+>    few minutes and the publish fails with `E404 ... /-/v1/done?authId=...` (section 7).
+
 ---
 
 ## 1. Where everything lives
@@ -26,6 +37,18 @@ Git setup in the checkout:
 | `upstream-main` (branch) | `upstream/main` | Read-only copy of the original project. |
 | `origin` (remote) | the-mysterious-kid/react-native-keys-next | Push here. |
 | `upstream` (remote) | numandev1/react-native-keys | Fetch only. Never push. |
+
+Notes:
+- Until 2026-10-06 your local working branch was called `next`. It was renamed to `main` so it
+  matches GitHub. The old local `main`, which tracked the original project, is now `upstream-main`.
+  If an old command or note says `next`, read it as `main`.
+- GitHub also has the original project's release tags (`v0.7.0` … `v0.7.13`). They came along with
+  the history when 1.0.0 was pushed with `--follow-tags`. They're harmless markers of upstream
+  releases; leave them. Your releases start at `v1.0.0-beta.1` and `v1.0.0`.
+- `--follow-tags` pushes only **annotated** tags. `npm version` creates annotated tags, so the
+  release steps below work. If you ever create a tag by hand, use `git tag -a v1.2.3 -m "v1.2.3"`;
+  a plain `git tag v1.2.3` won't be pushed by `--follow-tags`, and you'd have to run
+  `git push origin v1.2.3`.
 
 ---
 
@@ -225,6 +248,13 @@ Read the list. **Never commit:**
 | `yarn.lock` changes you didn't intend | Your local Yarn (3.x) rewrites the lockfile in a different format. |
 | `lib/`, `plugin/build/` | Build output, generated on publish. |
 
+**Why the key files change:** every iOS or Android build runs `keysIOS.js` / `keysAndroid.js`,
+which encrypt the keys JSON with a fresh random password and write the result into this package's
+`cpp/` folder (plus `PrivateKey.java` on Android and `ios/privateKey.m` on iOS). In a user's app
+that happens inside their `node_modules`, which is fine. In this repo it happens to tracked
+files whenever you build `example/` or `exampleExpo/`. Whatever is in those files gets published to
+npm, so it must always be the committed placeholder.
+
 If the key files show up as modified, put them back:
 
 ```bash
@@ -342,9 +372,13 @@ Look for: the right version, around 230 files, `plugin/build/` present, no `exam
 cd ~/Projects/react-native-keys-next && NODE_OPTIONS=--experimental-require-module npm publish --access public
 ```
 
-npm prints `Authenticate your account at https://www.npmjs.com/auth/cli/...` and `Press ENTER`.
-Press Enter, approve with your passkey in the browser, and wait for
-`+ react-native-keys-next@1.0.1`.
+First it builds (`bob build`) and uploads the package (about 11 MB, so 1–3 minutes). The
+`ExperimentalWarning`, "Browserslist: caniuse-lite is old" and bob's "No module/types field"
+warnings are expected and harmless. Then it prints
+`Authenticate your account at https://www.npmjs.com/auth/cli/...` and `Press ENTER`.
+**Stay at the terminal for this:** press Enter as soon as it appears, approve with your passkey in
+the browser, and wait for `+ react-native-keys-next@1.0.1`. If you wait too long, the link expires
+and you get `E404`; just run the same publish command again.
 
 **6. Push the release commit and tag**
 
@@ -364,7 +398,21 @@ npm view react-native-keys-next dist-tags
 ```
 
 `latest` should show the new version. The npmjs.com page can take up to an hour to update,
-even though installs work immediately. Then reply on the issues that this release fixes.
+even though installs work immediately. (Right after the very first publish, npm's website briefly
+showed a `0.0.0-stage` "Temporary Holding Version". That's npm's own placeholder, already
+deprecated. Ignore it.)
+
+**9. After a stable release that follows betas**, mark the betas as outdated so nobody keeps
+installing them:
+
+```bash
+npm deprecate react-native-keys-next@1.0.0-beta.1 "Use 1.0.0 or newer"
+```
+
+Run it once per beta version, with the exact version (e.g. `@1.1.0-beta.0`), and change the
+message to the new stable version. It asks for your passkey like `publish` does.
+
+Then reply on the issues that this release fixes.
 
 ### Pre-releases (to let people test before a stable release)
 
@@ -400,6 +448,7 @@ Both commands ask for your passkey like `publish` does.
 | Error | Meaning / fix |
 | --- | --- |
 | `E403 ... two-factor authentication` / `EOTP` | Run the command in a normal terminal so you can press Enter and approve in the browser. It can't run in the background. |
+| `E404 Not Found - GET https://registry.npmjs.org/-/v1/done?authId=...` | The sign-in link expired before you approved it. Nothing was published. Run the publish again and press Enter / approve straight away. |
 | `E403 You cannot publish over the previously published versions` | That version already exists. Bump the version again. |
 | `ENEEDAUTH` / `npm whoami` fails | `npm login`. |
 | `Error [ERR_REQUIRE_ESM]` during prepare | Missing `NODE_OPTIONS=--experimental-require-module` (or upgrade Node to 22.12+). |
@@ -460,3 +509,52 @@ Golden rules:
 4. Never force-push `main`, never unpublish. Fix forward and deprecate.
 5. Betas go to `--tag next`, stable to `latest`.
 6. Every release gets a CHANGELOG entry, a tag, and a GitHub release.
+
+---
+
+## 10. Open to-dos (as of 1.0.0)
+
+Not done yet. Tick them off over time.
+
+**GitHub settings (browser, a few minutes)**
+- [ ] Turn on **Discussions**. The issue form sends questions there; until it's on, that link 404s.
+- [ ] Turn on **Private vulnerability reporting**. `SECURITY.md` and the issue form link to it.
+- [ ] Create the labels listed in section 2.
+- [ ] Optional: a branch rule on `main` that blocks force-pushes and deletion.
+
+**Credit and links that still point to the original author**
+
+These are kept as credit to Muhammad Numan (numandev1). Decide whether to keep or change each one:
+- [ ] README Discord badge: it's the original project's Discord server, which you can't answer in.
+  Remove it, or replace it with a link to your Discussions.
+- [ ] README "Would you like to support me?" block: numandev1's follow/YouTube/Buy-Me-a-Coffee links.
+  Keep it under a heading like "Support the original author", or remove it.
+- [ ] README "Consider supporting with a star" footer: links to numandev1's repo stars.
+- [ ] `.github/FUNDING.yml`: GitHub's "Sponsor" button goes to numandev1. Point it to your own
+  account if you set up GitHub Sponsors, or delete the file.
+
+**CI**
+- [ ] The `example/` app is still React Native 0.72, which this package no longer supports
+  (0.75+). The PR workflows (`build-android.yml`, `build-ios.yml`, `build-project.yml`,
+  `validate-js.yml`) build it, so they'll fail or prove nothing. Upgrade `example/` to the newest RN.
+  Until then, ignore red CI on PRs and test by hand (section 4).
+- [ ] The full compatibility matrix scripts live outside the repo in
+  `~/Projects/rnkeys-matrix/harness`. Moving them into the repo (e.g. `scripts/matrix/`) would let
+  you, and contributors, rerun them anywhere.
+
+**Publishing**
+- [ ] Set up **npm Trusted Publishing** from GitHub Actions: publishing from CI when you create a
+  GitHub release, with no passkey prompt in your terminal and a provenance badge on npm. (The old
+  `publishnpm.yml` from the original project was removed because it auto-bumped versions and used a
+  long-lived token.)
+- [ ] Upgrade Node to 22.12 or newer (`node -v` shows 22.11). Then you can drop the
+  `NODE_OPTIONS=--experimental-require-module` prefix from every command.
+- [ ] Add `"types": "lib/typescript/index.d.ts"` and `"module": "lib/module/index.js"` to
+  `package.json` (the bob warnings during publish). Do this in a minor release and test an app
+  import afterwards. It's harmless as-is, because React Native resolves `src/index.ts`.
+
+**Code**
+- [ ] Offer the iOS/Android fixes back to the original project as a pull request to
+  numandev1/react-native-keys, crediting both ways.
+- [ ] OpenSSL: Android ships 3.5.1 prebuilt. Check for OpenSSL security releases each quarter
+  (section 8).
