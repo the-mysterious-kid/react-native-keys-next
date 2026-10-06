@@ -1,7 +1,7 @@
 {
-  "name": "react-native-keys",
-  "version": "0.7.12",
-  "description": "🔐 Make protected .ENVs variables",
+  "name": "react-native-keys-next",
+  "version": "1.0.0-beta.1",
+  "description": "🔐 Protected ENV variables for React Native (maintained fork of react-native-keys with React Native 0.75+ / New Architecture support)",
   "main": "./src/index.ts",
   "source": "src/index",
   "files": [
@@ -14,7 +14,7 @@
     "plugin/build",
     "keysAndroid.js",
     "keysIOS.js",
-    "react-native-keys.podspec",
+    "react-native-keys-next.podspec",
     "!lib/typescript/example",
     "!android/build",
     "!ios/build",
@@ -59,13 +59,13 @@
     "undecryptable",
     "envs"
   ],
-  "repository": "https://github.com/numandev1/react-native-keys",
-  "author": "numandev1 <muhammadnuman70@gmail.com> (https://github.com/numandev1)",
+  "repository": "https://github.com/the-mysterious-kid/react-native-keys-next",
+  "author": "the-mysterious-kid (https://github.com/the-mysterious-kid)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/numandev1/react-native-keys/issues"
+    "url": "https://github.com/the-mysterious-kid/react-native-keys-next/issues"
   },
-  "homepage": "https://github.com/numandev1/react-native-keys#readme",
+  "homepage": "https://github.com/the-mysterious-kid/react-native-keys-next#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -156,5 +156,8 @@
     "name": "RNKeysSpec",
     "type": "modules",
     "jsSrcsDir": "src/spec"
-  }
+  },
+  "contributors": [
+    "numandev1 <muhammadnuman70@gmail.com> (https://github.com/numandev1) - original author of react-native-keys"
+  ]
 }

@@ -2,7 +2,7 @@ import { NativeModules, Platform } from 'react-native';
 import type { KeyTurboSecuredType, KeyTurboType } from './type';
 
 const LINKING_ERROR =
-  `The package 'react-native-keys' doesn't seem to be linked. Make sure: \n\n` +
+  `The package 'react-native-keys-next' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
@@ -26,7 +26,8 @@ const KeysTurboModule = KeysModule
       },
     );
 const installed = KeysTurboModule.install();
-if (!installed) {
+// @ts-expect-error
+if (!installed || typeof global.secureFor !== 'function') {
   throw new Error(LINKING_ERROR);
 }
 

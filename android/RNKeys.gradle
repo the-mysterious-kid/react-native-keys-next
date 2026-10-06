@@ -3,6 +3,9 @@
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+// Package root (parent of android/), works under any install name (incl. npm aliases)
+project.ext.set("rnKeysPackageDir", buildscript.sourceFile.parentFile.parentFile.absolutePath)
+
 def getCurrentFlavor() {
   Gradle gradle = getGradle()
   String taskName = gradle.getStartParameter().getTaskNames()[0]
@@ -92,10 +95,10 @@ def loadKeys() {
         } else {
           exportCommand = "export KEYSFILE=" + keysFile + " && ";
         }
-        println "Choose " + keysFile + " file for react-native-keys to avoid stop any build process\n\n"
+        println "Choose " + keysFile + " file for react-native-keys-next to avoid stop any build process\n\n"
       } else {
         // Print an error message
-        println "\n\nPlease define project.ext.keyFiles or export KEYSFILE=..json ./gradlew .. as you are using react-native-keys\n\n\n\n"
+        println "\n\nPlease define project.ext.keyFiles or export KEYSFILE=..json ./gradlew .. as you are using react-native-keys-next\n\n\n\n"
       }
     }
     if (!keysFile.isEmpty()) {
@@ -105,8 +108,7 @@ def loadKeys() {
     if (IS_EXAMPLE) {
       exportCommand = exportCommand + "export IS_EXAMPLE='TRUE' && ../../keysAndroid.js"
     } else {
-      def nodeModulesDir = getNodeModulesDir()
-      exportCommand = exportCommand + nodeModulesDir + "/node_modules/react-native-keys/keysAndroid.js"
+      exportCommand = exportCommand + "\"" + project.ext.rnKeysPackageDir + "/keysAndroid.js\""
     }
     def proc;
 

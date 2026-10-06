@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import RNKeys from 'react-native-keys';
+import RNKeys from 'react-native-keys-next';
 
 export default function App() {
   const [jniValue] = useState(RNKeys.secureFor('secure3'));

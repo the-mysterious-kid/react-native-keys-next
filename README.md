@@ -2,13 +2,53 @@
   <img width="500" src="./media/keys.png">
 </div>
 
+> ## react-native-keys-next
+>
+> A maintained fork of [react-native-keys](https://github.com/numandev1/react-native-keys) by [Muhammad Numan](https://github.com/numandev1), updated for **React Native 0.75 – 0.87+** and the **New Architecture** (bridgeless).
+>
+> **What's different from `react-native-keys@0.7.13`**
+> - iOS: JSI bindings are installed through `RCTTurboModuleWithJSIBindings`, so it builds and runs on bridgeless React Native (0.82+, where `RCTCxxBridge` was removed). The old-architecture path is kept for apps that still disable the New Architecture (RN ≤ 0.81).
+> - Android: Gradle no longer requires `node_modules/react-native/android` (removed in RN 0.80).
+> - Install paths are resolved from the package's own folder, so it works under its new name **or** an npm alias.
+> - iOS implements both JSI-binding hooks: `installJSIBindingsWithRuntime:` (RN 0.75–0.76) and `installJSIBindingsWithRuntime:callInvoker:` (RN 0.77+, the only one in 0.87).
+> - If the native bindings are missing, it throws a clear linking error instead of failing silently.
+> - Android: `secureFor` no longer leaks a JNI string buffer and local references on every call, and a `null` `BuildConfig` field no longer crashes `publicKeys`.
+> - iOS: secure values are decoded as UTF-8 (non-ASCII secrets were garbled before), and a missing key returns `""` (same as Android) instead of crashing on a non-string value.
+> - `secureFor()` called without a string key throws a JS error instead of reading out of bounds.
+>
+> **Tested** (release builds, secure + public keys verified at runtime; iOS 27 simulator, Android 13 on a Galaxy A51):
+>
+> | React Native | Architecture | iOS | Android |
+> | --- | --- | --- | --- |
+> | 0.75.5 | New (bridgeless) and Old | ✅ | ✅ |
+> | 0.76.9, 0.77.3, 0.78.3, 0.79.7, 0.80.3 | New (bridgeless) | ✅ | ✅ |
+> | 0.81.6 | New (bridgeless) and Old | ✅ | ✅ |
+> | 0.82.1, 0.83.10, 0.84.1, 0.85.3, 0.86.3, 0.87.1 | New (bridgeless, the only option) | ✅ | ✅ |
+>
+> **Good to know**
+> - Each iOS or Android build regenerates the encrypted keys inside the package's `cpp/` folder. Don't build iOS and Android **at the same time from the same checkout**, or one platform can end up with the other's key material (secure values come back as `""`).
+> - Secure keys protect against static analysis of the shipped app (decompiling the APK/IPA), which is what react-native-config fails. They can still be read at runtime by someone hooking a rooted/jailbroken device, so pair this with runtime protection (e.g. jailbreak/root and hook detection) for high-value secrets.
+>
+> **Switching from react-native-keys**
+>
+> Keep your imports and native setup unchanged by installing the fork under the old name with an npm alias:
+>
+> ```sh
+> npm install react-native-keys@npm:react-native-keys-next
+> ```
+>
+> Or install it under its own name and replace `react-native-keys` with `react-native-keys-next` in your imports, `app/build.gradle` (`project(':react-native-keys-next')`), the Xcode pre-action path, and the Expo plugin name.
+>
+> Supported: React Native **0.75 and newer** (iOS and Android, New and Old Architecture where React Native still supports it). For React Native ≤ 0.74, use the original `react-native-keys`.
+
+
 <div align="center">
 
 [![GitHub Repo stars](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](#installation)
 [![GitHub Repo stars](https://img.shields.io/badge/Expo-1B1F23?style=for-the-badge&logo=expo&logoColor=white)](#managed-expo)
 [![GitHub Repo stars](https://img.shields.io/static/v1?style=for-the-badge&message=Discord&color=5865F2&logo=Discord&logoColor=FFFFFF&label=)](https://discord.gg/fgPHnZpH9d)
-[![GitHub Repo stars](https://img.shields.io/github/stars/numandev1/react-native-keys?style=for-the-badge&logo=github)](https://github.com/numandev1/react-native-keys/stargazers)
-![npm](https://img.shields.io/npm/dt/react-native-keys?style=for-the-badge)
+[![GitHub Repo stars](https://img.shields.io/github/stars/the-mysterious-kid/react-native-keys-next?style=for-the-badge&logo=github)](https://github.com/the-mysterious-kid/react-native-keys-next/stargazers)
+![npm](https://img.shields.io/npm/dt/react-native-keys-next?style=for-the-badge)
 
 </div>
 
@@ -88,7 +128,7 @@ We can Manage **secure**(protected) and **public** enviroment through **react-na
 ## Installation
 
 ```sh
-yarn add react-native-keys
+yarn add react-native-keys-next
 ```
 
 ##### [New Architecture (Turbo Module) Supported](https://reactnative.dev/docs/new-architecture-intro)
@@ -100,7 +140,7 @@ You can give feedback on [Discord channel](https://discord.gg/fgPHnZpH9d)
 <summary><b>Click here to Expand Managed Expo plugin Config</b></summary>
 
 ```
-expo install react-native-keys
+npx expo install react-native-keys-next
 ```
 
 Add `keys.development.json`, `keys.staging.json` and `keys.production.json` at project root directory
@@ -112,7 +152,7 @@ Add the Keys plugin to your Expo config (`app.json`, `app.config.json` or `app.c
   "name": "my app",
   "plugins": [
     [
-      "react-native-keys",
+      "react-native-keys-next",
       {
         "android": {
           "defaultKeyFile": "keys.staging.json" //default: keys.development.json
@@ -214,7 +254,7 @@ later on you can define other enviroment files like `keys.staging.json` and `key
 ### Public Keys
 
 ```js
-import Keys from 'react-native-keys';
+import Keys from 'react-native-keys-next';
 
 Keys.API_URL; // https://example.com'
 Keys.URI_SCHEME; // fb://
@@ -223,7 +263,7 @@ Keys.URI_SCHEME; // fb://
 ### Secure Keys
 
 ```js
-import Keys from 'react-native-keys';
+import Keys from 'react-native-keys-next';
 
 Keys.secureFor('API_TOKEN'); // 'ABCSE#$DDSD
 Keys.secureFor('GOOGLE_API_KEY'); // 'ABCSE#$DDSD
@@ -237,7 +277,7 @@ Keep in mind It's [basically impossible to prevent users from reverse engineerin
 Install the package:
 
 ```
-yarn add react-native-keys
+yarn add react-native-keys-next
 ```
 
 Link the library:
@@ -247,7 +287,7 @@ Link the library:
 or later. For earlier versions you need to manually link the module.)
 
 ```
-react-native link react-native-keys
+react-native link react-native-keys-next
 ```
 
 ### IOS
@@ -265,11 +305,11 @@ if cocoapods are used in the project then pod has to be installed as well:
 - **Manual Link (iOS)**
 
   1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
-  2. Go to `node_modules` ➜ `react-native-keys` and add `Keys.xcodeproj`
+  2. Go to `node_modules` ➜ `react-native-keys-next` and add `Keys.xcodeproj`
   3. Expand the `Keys.xcodeproj` ➜ `Products` folder
   4. In the project navigator, select your project. Add `Keys.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
   5. And go the Build Settings tab. Make sure All is toggled on (instead of Basic)
-  6. Look for Header Search Paths and add `$(SRCROOT)/../node_modules/react-native-keys/ios/**` as `non-recursive`
+  6. Look for Header Search Paths and add `$(SRCROOT)/../node_modules/react-native-keys-next/ios/**` as `non-recursive`
 
 - **Mandatory Step**
 
@@ -296,7 +336,7 @@ ios/tmp.xcconfig
 6. Go to _Edit scheme..._ -> _Build_ -> _Pre-actions_, click _+_ and select _New Run Script Action_. Paste below code which will generate "tmp.xcconfig" before each build exposing values to Build Settings and Info.plist. Make sure to select your target under _Provide build settings from_ and Shared checkbox is ticked/enabled, so `$SRCROOT` environment variables is available to the script..
 
    ```
-   "${SRCROOT}/../node_modules/react-native-keys/keysIOS.js"
+   "${SRCROOT}/../node_modules/react-native-keys-next/keysIOS.js"
    ```
 
    if you face `env: node: No such file or directory` issue due to Nvm, Fnm or notion please follow this [guide](#using-node-with-nvm-fnm-or-notion)
@@ -310,14 +350,14 @@ ios/tmp.xcconfig
 ```sh
 export KEYSFILE=keys.development.json
 
-"${SRCROOT}/../node_modules/react-native-keys/keysIOS.js"
+"${SRCROOT}/../node_modules/react-native-keys-next/keysIOS.js"
 ```
 
 Alternatively, you can define a map in `Pre-actions` associating builds with env files:
 
 ```sh
     export KEYSFILE = "path_to_env"
-   "${SRCROOT}/../node_modules/react-native-keys/keysIOS.js"
+   "${SRCROOT}/../node_modules/react-native-keys-next/keysIOS.js"
 ```
 
 ### Android
@@ -327,8 +367,8 @@ Alternatively, you can define a map in `Pre-actions` associating builds with env
   **android/settings.gradle**
 
   ```diff
-  + include ':react-native-keys'
-  + project(':react-native-keys').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-keys/android')
+  + include ':react-native-keys-next'
+  + project(':react-native-keys-next').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-keys-next/android')
   ```
 
   **android/app/build.gradle**
@@ -336,7 +376,7 @@ Alternatively, you can define a map in `Pre-actions` associating builds with env
   ```diff
   dependencies {
    implementation "com.facebook.react:react-native:+"  // From node_modules
-  + implementation project(':react-native-keys')
+  + implementation project(':react-native-keys-next')
   }
   ```
 
@@ -366,7 +406,7 @@ project.ext.keyFiles = [
   release: "keys.staging.json",
 ]
 
-apply from: project(':react-native-keys').projectDir.getPath() + "/RNKeys.gradle"
+apply from: project(':react-native-keys-next').projectDir.getPath() + "/RNKeys.gradle"
 ```
 
 ## Native Usage
@@ -525,7 +565,7 @@ export RELEASE_KEYSFILE=keys.staging.json  # in IPA
 
 #above DEBUG_KEYSFILE and RELEASE_KEYSFILE variable are optional
 
-"${SRCROOT}/../node_modules/react-native-keys/keysIOS.js"
+"${SRCROOT}/../node_modules/react-native-keys-next/keysIOS.js"
 ```
 
 Also ensure that "Provide build settings from", just above the script, has a value selected so that PROJECT_DIR is set.
@@ -608,7 +648,7 @@ fi
 
 [ -z "$NODE_BINARY" ] && export NODE_BINARY="node"
 
-$NODE_BINARY "${SRCROOT}/../node_modules/react-native-keys/keysIOS.js"
+$NODE_BINARY "${SRCROOT}/../node_modules/react-native-keys-next/keysIOS.js"
 ```
 
 # Alternative Package

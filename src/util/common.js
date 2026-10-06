@@ -17,7 +17,8 @@ const PROJECT_ROOT_DIR_PATH = path.join(
   isExample ? `../../${exampleDirName}/` : '../../../../',
 );
 const PACKAGE_ROOT_DIR_PATH = path.join(__dirname, '../../');
-const RN_KEYS_PATH = path.join('node_modules', 'react-native-keys');
+// Resolve from this package's own folder so it works under any install name (incl. npm aliases)
+const RN_KEYS_PATH = path.relative(PROJECT_ROOT_DIR_PATH, PACKAGE_ROOT_DIR_PATH);
 const KEYS_IOS_PATH = path.join(RN_KEYS_PATH, 'ios');
 const KEYS_ANDROID_PATH = path.join(RN_KEYS_PATH, 'android');
 const KEYS_SRC_PATH = path.join(RN_KEYS_PATH, 'src');

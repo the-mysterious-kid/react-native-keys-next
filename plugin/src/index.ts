@@ -8,7 +8,7 @@ import { withPreActionScript } from './ios';
 import type { PluginConfigType } from './pluginConfig';
 
 /**
- * A config plugin for configuring `react-native-keys`
+ * A config plugin for configuring `react-native-keys-next`
  */
 const withRnKeys: ConfigPlugin<PluginConfigType> = (config, props) => {
   //Android;

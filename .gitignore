@@ -74,3 +74,6 @@ example/vendor
 .yarn/cache
 example/.yarn/cache
 coverage
+
+# npm pack output
+*.tgz

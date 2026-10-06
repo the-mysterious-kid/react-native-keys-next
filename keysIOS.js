@@ -48,7 +48,7 @@ const makeIosJnuFiles = () => {
     'GeneratedDotEnv.m',
   );
   genTSType(allKeys);
-  console.info('react-native-keys', {
+  console.info('react-native-keys-next', {
     isGeneratedPrivateKeyFile,
     isDoneCreatedXCodeConfigFile,
     isGeneratedDotEnvFile,

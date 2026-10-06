@@ -3,8 +3,9 @@
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <RNKeysSpec/RNKeysSpec.h>
+#import <ReactCommon/RCTTurboModuleWithJSIBindings.h>
 
-@interface Keys : NSObject <NativeKeysSpec>
+@interface Keys : NSObject <NativeKeysSpec, RCTTurboModuleWithJSIBindings>
 #else
 #import <React/RCTBridgeModule.h>
 

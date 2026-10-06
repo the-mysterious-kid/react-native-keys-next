@@ -7,7 +7,7 @@ project.ext.keyFiles = [
    staging: "keys.staging.json"
 ]
 
-apply from: project(':react-native-keys').projectDir.getPath() + "/RNKeys.gradle"
+apply from: project(':react-native-keys-next').projectDir.getPath() + "/RNKeys.gradle"
 
 /**
  * This is the configuration block to customize your React Native Android app.

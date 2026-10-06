@@ -30,7 +30,7 @@ const makeAndroidJnuFiles = () => {
     'PrivateKey.java',
   );
   genTSType(allKeys);
-  console.info('react-native-keys', {
+  console.info('react-native-keys-next', {
     isDoneAddedPrivateKey,
   });
 };

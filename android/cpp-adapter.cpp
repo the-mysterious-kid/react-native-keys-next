@@ -65,11 +65,16 @@ std::string jmapToJsonString(JNIEnv *env, jobject jmap)
 
         // Get the value object and convert it to a string
         jobject jvalue = env->CallObjectMethod(jentry, jmapEntryGetMethod);
-        jstring jstrValue = (jstring)env->CallObjectMethod(jvalue, jtoStringMethod);
-        std::string strValue = jstringToString(env, jstrValue);
-
-        // Add the key-value pair to the JSON object
-        jsonObj[strKey] = strValue;
+        jstring jstrValue = nullptr;
+        if (jvalue != nullptr)
+        {
+            jstrValue = (jstring)env->CallObjectMethod(jvalue, jtoStringMethod);
+            jsonObj[strKey] = jstringToString(env, jstrValue);
+        }
+        else
+        {
+            jsonObj[strKey] = nullptr;
+        }
 
         // Release local references
         env->DeleteLocalRef(jentry);
@@ -180,24 +185,36 @@ void install(facebook::jsi::Runtime &jsiRuntime)
                                                          const Value *arguments,
                                                          size_t count) -> Value
                                                       {
-                                                          string key = arguments[0].getString(
-                                                                                       runtime)
-                                                                           .utf8(
-                                                                               runtime);
+                                                          if (count < 1 || !arguments[0].isString())
+                                                          {
+                                                              throw JSError(runtime, "secureFor expects a string key");
+                                                          }
+                                                          string key = arguments[0].getString(runtime).utf8(runtime);
 
                                                           JNIEnv *jniEnv = GetJniEnv();
+                                                          // The JS thread rarely returns to Java, so free every local ref before leaving.
+                                                          if (jniEnv->PushLocalFrame(8) != JNI_OK)
+                                                          {
+                                                              return Value(runtime, String::createFromUtf8(runtime, ""));
+                                                          }
 
-                                                          java_class = jniEnv->GetObjectClass(
-                                                              java_object);
-                                                          jmethodID jniMethod = jniEnv->GetStaticMethodID(java_class, "getSecureFor", "(Ljava/lang/String;)Ljava/lang/String;");
+                                                          jclass clazz = jniEnv->GetObjectClass(java_object);
+                                                          jmethodID jniMethod = jniEnv->GetStaticMethodID(clazz, "getSecureFor", "(Ljava/lang/String;)Ljava/lang/String;");
+                                                          jstring jkey = string2jstring(jniEnv, key);
+                                                          jstring result = (jstring)jniEnv->CallStaticObjectMethod(clazz, jniMethod, jkey);
 
-                                                          jstring jstr1 = string2jstring(jniEnv, key);
-                                                          jobject result = jniEnv->CallStaticObjectMethod(java_class, jniMethod, jstr1);
-                                                          const char* str = jniEnv->GetStringUTFChars((jstring)result, NULL);
+                                                          std::string value;
+                                                          if (jniEnv->ExceptionCheck())
+                                                          {
+                                                              jniEnv->ExceptionClear();
+                                                          }
+                                                          else if (result != nullptr)
+                                                          {
+                                                              value = jstringToString(jniEnv, result);
+                                                          }
+                                                          jniEnv->PopLocalFrame(nullptr);
 
-                                                          return Value(runtime,
-                                                                       String::createFromUtf8(
-                                                                           runtime, str));
+                                                          return Value(runtime, String::createFromUtf8(runtime, value));
                                                       });
 
     jsiRuntime.global().setProperty(jsiRuntime, "secureFor", move(secureFor));
@@ -212,16 +229,25 @@ void install(facebook::jsi::Runtime &jsiRuntime)
                                                           size_t count) -> Value
                                                        {
                                                            JNIEnv *jniEnv = GetJniEnv();
+                                                           if (jniEnv->PushLocalFrame(32) != JNI_OK)
+                                                           {
+                                                               return Value(runtime, String::createFromUtf8(runtime, "{}"));
+                                                           }
 
-                                                           java_class = jniEnv->GetObjectClass(
-                                                               java_object);
-                                                           jmethodID get = jniEnv->GetMethodID(
-                                                               java_class, "getPublicKeys",
-                                                               "()Ljava/util/Map;");
-
+                                                           jclass clazz = jniEnv->GetObjectClass(java_object);
+                                                           jmethodID get = jniEnv->GetMethodID(clazz, "getPublicKeys", "()Ljava/util/Map;");
                                                            jobject map_obj = jniEnv->CallObjectMethod(java_object, get);
 
-                                                           std::string jsonString = jmapToJsonString(jniEnv, map_obj);
+                                                           std::string jsonString = "{}";
+                                                           if (jniEnv->ExceptionCheck())
+                                                           {
+                                                               jniEnv->ExceptionClear();
+                                                           }
+                                                           else if (map_obj != nullptr)
+                                                           {
+                                                               jsonString = jmapToJsonString(jniEnv, map_obj);
+                                                           }
+                                                           jniEnv->PopLocalFrame(nullptr);
 
                                                            return Value(runtime,
                                                                         String::createFromUtf8(

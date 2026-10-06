@@ -1,5 +1,6 @@
 import { type ConfigPlugin, withAppBuildGradle } from '@expo/config-plugins';
 
+import { PACKAGE_DIR_NAME } from '../packageDir';
 import type { PluginConfigType } from '../pluginConfig';
 
 /**
@@ -14,7 +15,7 @@ function applyImplementation(
   const RnkeysImplementation = `
 project.ext.IS_EXAMPLE = ${IS_EXAMPLE};
 project.ext.DEFAULT_FILE_NAME = "${defaultKeyFile}"
-apply from: project(':react-native-keys').projectDir.getPath() + "/RNKeys.gradle"
+apply from: project(':${PACKAGE_DIR_NAME}').projectDir.getPath() + "/RNKeys.gradle"
   `;
   if (!appBuildGradle.includes('project.ext.DEFAULT_FILE_NAME')) {
     const enableProguardInReleaseBuildsLine = appBuildGradle.match(

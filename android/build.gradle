@@ -60,7 +60,7 @@ def resolveReactNativeDirectory() {
   }
 
   throw new Exception(
-    "[react-native-keys] Unable to resolve react-native location in " +
+    "[react-native-keys-next] Unable to resolve react-native location in " +
       "node_modules. You should add project extension property (in app/build.gradle) " +
       "`REACT_NATIVE_NODE_MODULES_DIR` with path to react-native."
   )
@@ -93,8 +93,9 @@ if(!found){
   // after which the base path will be null
   while (basePath) {
     nodeModulesDir = Paths.get(basePath.toString(), "node_modules")
-    reactNativeDir = Paths.get(nodeModulesDir.toString(), "react-native/android")
-    if (nodeModulesDir.toFile().exists() && reactNativeDir.toFile().exists()) {
+    // RN 0.80+ no longer ships react-native/android in node_modules
+    reactNativeDir = Paths.get(nodeModulesDir.toString(), "react-native")
+    if (nodeModulesDir.toFile().exists() && Paths.get(reactNativeDir.toString(), "package.json").toFile().exists()) {
       found = true
       break;
     }

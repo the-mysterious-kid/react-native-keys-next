@@ -3,6 +3,7 @@ import { type ConfigPlugin, withDangerousMod } from '@expo/config-plugins';
 import NP from 'normalize-path';
 import walkSync from 'walk-sync';
 import { Builder, parseStringPromise } from 'xml2js';
+import { PACKAGE_DIR_NAME } from '../packageDir';
 import type { PluginConfigType } from '../pluginConfig';
 
 const normalizePath = process.platform === 'win32' ? NP : (p: any) => p;
@@ -33,7 +34,7 @@ const preAction = (
                   }export DEFAULT_FILE_NAME=${defaultKeyFile}\n${
                     IS_EXAMPLE
                       ? '"${SRCROOT}/../../keysIOS.js"'
-                      : '"${SRCROOT}/../node_modules/react-native-keys/keysIOS.js"'
+                      : `"\${SRCROOT}/../node_modules/${PACKAGE_DIR_NAME}/keysIOS.js"`
                   }`,
                 },
                 EnvironmentBuildable: [
@@ -89,7 +90,7 @@ export const withPreActionScript: ConfigPlugin<PluginConfigType> = (
           await Promise.all(promises);
         }
       } catch (error) {
-        console.log(error, 'preactionScript <- react-native-keys');
+        console.log(error, 'preactionScript <- react-native-keys-next');
       }
 
       return dangerousConfig;
