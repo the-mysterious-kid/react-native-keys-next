@@ -12,7 +12,7 @@ First stable release. Same code as 1.0.0-beta.1, which passed the full compatibi
 (React Native 0.75.5 → 0.87.1, release builds on iOS and Android, secure and public keys verified at runtime).
 
 ### Added
-- Issue forms, `SECURITY.md`, this changelog and `MAINTAINING.md`.
+- Issue forms, `SECURITY.md`, this changelog, `MAINTAINING.md` and `docs/MAINTAINER_GUIDE.md`.
 - README troubleshooting entries for empty secure values and the native-module linking error.
 
 ### Changed

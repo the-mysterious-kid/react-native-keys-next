@@ -3,6 +3,9 @@
 Notes for the maintainer: how issues are handled, how releases are cut, and what to check when
 React Native ships a new version.
 
+For step-by-step commands (triage replies, testing a fix, committing, pushing, publishing), see
+[docs/MAINTAINER_GUIDE.md](docs/MAINTAINER_GUIDE.md).
+
 ## Versioning
 
 [Semantic Versioning](https://semver.org/), with `CHANGELOG.md` updated in every release.
