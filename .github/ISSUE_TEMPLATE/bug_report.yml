@@ -1,0 +1,117 @@
+name: Bug report
+description: Something doesn't build, crashes, or returns the wrong value.
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Issues with all the fields below filled in usually get fixed in days; issues without a version or a reproduction usually can't be.
+
+        Before opening: check the [Troubleshooting](https://github.com/the-mysterious-kid/react-native-keys-next#troubleshooting) section and search [existing issues](https://github.com/the-mysterious-kid/react-native-keys-next/issues?q=is%3Aissue).
+
+        **Never paste real secrets or your keys JSON.** Replace values with `xxx`.
+  - type: input
+    id: package-version
+    attributes:
+      label: react-native-keys-next version
+      description: From `npm ls react-native-keys-next` (or `npm ls react-native-keys` if you use the npm alias).
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: rn-version
+    attributes:
+      label: React Native version
+      placeholder: "0.87.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - iOS
+        - Android
+    validations:
+      required: true
+  - type: dropdown
+    id: architecture
+    attributes:
+      label: Architecture
+      options:
+        - New Architecture (default)
+        - Old Architecture (newArchEnabled=false / RCT_NEW_ARCH_ENABLED=0)
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: setup
+    attributes:
+      label: Project type
+      options:
+        - Bare React Native
+        - Expo (prebuild / development build)
+    validations:
+      required: true
+  - type: dropdown
+    id: build-type
+    attributes:
+      label: Build type
+      multiple: true
+      options:
+        - Debug
+        - Release
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How is it installed?
+      options:
+        - "react-native-keys-next"
+        - "npm alias: react-native-keys@npm:react-native-keys-next"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What you expected, and what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: |
+        A minimal repository is the fastest way to a fix (`npx @react-native-community/cli init Repro`, add the package, push).
+        Otherwise list the exact steps, including how you run the build (Xcode, `npx react-native run-android`, EAS, CI…).
+      placeholder: |
+        1. npx @react-native-community/cli init Repro --version 0.87.1
+        2. npm i react-native-keys-next
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Keys setup
+      description: |
+        Your keys JSON **structure with values replaced**, the ENVFILE you build with, your Xcode pre-action script and the react-native-keys lines in `android/app/build.gradle` (or your Expo plugin config).
+      render: text
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error output
+      description: Full build error (from the first `error:`), red screen, or `adb logcat` / Xcode console crash log.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I did a clean build (`cd ios && pod install`, Xcode clean build folder, `cd android && ./gradlew clean`).
+          required: true
+        - label: I removed every real secret from this issue.
+          required: true

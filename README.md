@@ -574,7 +574,17 @@ Also ensure that "Provide build settings from", just above the script, has a val
 
 you can decompile **APK/IPA** by this package [react-native-decompiler](https://www.npmjs.com/package/react-native-decompiler 'react-native-decompiler') and can find public and secure keys. you will not find secure keys.
 
-Troubleshooting
+## Troubleshooting
+
+### `Keys.secureFor(...)` returns an empty string
+
+- The keys file wasn't found when the app was built. Check that `ENVFILE` points to an existing file (relative to the project root) and that the key exists under `secure` in that file.
+- iOS: the Xcode **pre-action** didn't run. Check that it is set on the scheme you build (and that "Provide build settings from" has a value), then do a clean build.
+- iOS and Android were built **at the same time from the same checkout**. Each build regenerates the encrypted keys inside the package, so one platform ends up with the other's key material. Build one at a time, then do a clean build of the affected one.
+
+### "The package 'react-native-keys-next' doesn't seem to be linked"
+
+The native code isn't linked into the app. Run `cd ios && pod install`, clean the build (Xcode → Product → Clean Build Folder; `cd android && ./gradlew clean`), and rebuild the app (a Metro reload is not enough). On Expo, run `npx expo prebuild` and use a development build; Expo Go can't load this package.
 
 ### Problems with Proguard
 
@@ -620,7 +630,7 @@ Change the **Pre-actions script** scripts in Xcode to:
 
 [ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
 
-if [[-s "$HOME/.nvm/nvm.sh"]]; then
+if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
 . "$HOME/.nvm/nvm.sh"
 elif [[ -x "$(command -v brew)" && -s "$(brew --prefix nvm)/nvm.sh" ]]; then
 . "$(brew --prefix nvm)/nvm.sh"
@@ -628,20 +638,20 @@ fi
 
 # Set up the nodenv node version manager if present
 
-if [[-x "$HOME/.nodenv/bin/nodenv"]]; then
+if [[ -x "$HOME/.nodenv/bin/nodenv" ]]; then
 eval "$("$HOME/.nodenv/bin/nodenv" init -)"
 fi
 
 # Set up the fnm node version manager if present
 
-if [[-s "$HOME/.fnm/fnm"]]; then
+if [[ -s "$HOME/.fnm/fnm" ]]; then
 eval "`$HOME/.fnm/fnm env --multi`"
 fi
 
 # Trying notion
 
 if [ -z "$NODE_BINARY" ]; then
-if [[-s "$HOME/.notion/bin/node"]]; then
+if [[ -s "$HOME/.notion/bin/node" ]]; then
 export NODE_BINARY="$HOME/.notion/bin/node"
 fi
 fi

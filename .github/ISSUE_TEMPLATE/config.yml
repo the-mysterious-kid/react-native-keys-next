@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or help with setup
+    url: https://github.com/the-mysterious-kid/react-native-keys-next/discussions
+    about: Ask setup and usage questions in Discussions so issues stay for bugs.
+  - name: Security vulnerability
+    url: https://github.com/the-mysterious-kid/react-native-keys-next/security/advisories/new
+    about: Report vulnerabilities privately. Do not open a public issue.

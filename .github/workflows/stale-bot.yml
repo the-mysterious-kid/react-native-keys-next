@@ -1,7 +1,12 @@
-name: Mark stale issues and pull requests
+name: Close issues waiting on the reporter
+
+# Only issues labelled `needs-info` (we asked for a version, logs or a repro and got no reply)
+# go stale. Confirmed bugs and feature requests are never auto-closed.
 on:
   schedule:
     - cron: "30 1 * * *"
+  workflow_dispatch:
+
 jobs:
   stale:
     runs-on: ubuntu-latest
@@ -9,11 +14,17 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/stale@v4
+      - uses: actions/stale@v9
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          days-before-stale: 365
-          stale-issue-message: 'This issue is stale because it has been open 365 days with no activity. Remove stale label or comment or this will be closed in 7 days.'
-          stale-pr-message: 'This PR is stale because it has been open 365 days with no activity. Remove stale label or comment or this will be closed in 7 days.'
-          close-issue-message: 'This issue was closed because it has been stalled for 7 days with no activity.'
-          close-pr-message: 'This PR was closed because it has been stalled for 7 days with no activity.'
+          only-labels: needs-info
+          days-before-stale: 14
+          days-before-close: 7
+          stale-issue-label: stale
+          stale-issue-message: >
+            This issue is waiting for the information requested above (versions, logs or a reproduction).
+            It will be closed in 7 days if there is no reply. Commenting keeps it open.
+          close-issue-message: >
+            Closing because the requested information didn't arrive. If you still see the problem on the
+            latest version, comment with the details and it will be reopened.
+          days-before-pr-stale: -1
+          days-before-pr-close: -1

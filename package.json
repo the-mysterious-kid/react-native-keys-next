@@ -1,6 +1,6 @@
 {
   "name": "react-native-keys-next",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0",
   "description": "🔐 Protected ENV variables for React Native (maintained fork of react-native-keys with React Native 0.75+ / New Architecture support)",
   "main": "./src/index.ts",
   "source": "src/index",
