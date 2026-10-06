@@ -27,7 +27,7 @@
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "lint": "biome check --write",
-    "prepare": "bob build",
+    "prepare": "bob build && tsc -p plugin",
     "release": "cd plugin && tsc && cd .. && release-it",
     "example": "yarn --cwd example",
     "exampleExpo": "yarn --cwd exampleExpo",
