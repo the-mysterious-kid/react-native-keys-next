@@ -6,6 +6,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Added
+- Verified on React Native 0.88.1 (iOS and Android release builds, New Architecture). No code changes were needed.
+
 ## [1.0.0] - 2026-10-06
 
 First stable release. Same code as 1.0.0-beta.1, which passed the full compatibility matrix

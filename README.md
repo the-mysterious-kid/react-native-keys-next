@@ -4,7 +4,7 @@
 
 > ## react-native-keys-next
 >
-> A maintained fork of [react-native-keys](https://github.com/numandev1/react-native-keys) by [Muhammad Numan](https://github.com/numandev1), updated for **React Native 0.75 – 0.87+** and the **New Architecture** (bridgeless).
+> A maintained fork of [react-native-keys](https://github.com/numandev1/react-native-keys) by [Muhammad Numan](https://github.com/numandev1), updated for **React Native 0.75 – 0.88+** and the **New Architecture** (bridgeless).
 >
 > **What's different from `react-native-keys@0.7.13`**
 > - iOS: JSI bindings are installed through `RCTTurboModuleWithJSIBindings`, so it builds and runs on bridgeless React Native (0.82+, where `RCTCxxBridge` was removed). The old-architecture path is kept for apps that still disable the New Architecture (RN ≤ 0.81).
@@ -16,14 +16,14 @@
 > - iOS: secure values are decoded as UTF-8 (non-ASCII secrets were garbled before), and a missing key returns `""` (same as Android) instead of crashing on a non-string value.
 > - `secureFor()` called without a string key throws a JS error instead of reading out of bounds.
 >
-> **Tested** (release builds, secure + public keys verified at runtime; iOS 27 simulator, Android 13 on a Galaxy A51):
+> **Tested** (release builds, secure + public keys verified at runtime; iOS 27 simulator, Android 13 on a Galaxy A51, Android 16 emulator for 0.88):
 >
 > | React Native | Architecture | iOS | Android |
 > | --- | --- | --- | --- |
 > | 0.75.5 | New (bridgeless) and Old | ✅ | ✅ |
 > | 0.76.9, 0.77.3, 0.78.3, 0.79.7, 0.80.3 | New (bridgeless) | ✅ | ✅ |
 > | 0.81.6 | New (bridgeless) and Old | ✅ | ✅ |
-> | 0.82.1, 0.83.10, 0.84.1, 0.85.3, 0.86.3, 0.87.1 | New (bridgeless, the only option) | ✅ | ✅ |
+> | 0.82.1, 0.83.10, 0.84.1, 0.85.3, 0.86.3, 0.87.1, 0.88.1 | New (bridgeless, the only option) | ✅ | ✅ |
 >
 > **Good to know**
 > - Each iOS or Android build regenerates the encrypted keys inside the package's `cpp/` folder. Don't build iOS and Android **at the same time from the same checkout**, or one platform can end up with the other's key material (secure values come back as `""`).
