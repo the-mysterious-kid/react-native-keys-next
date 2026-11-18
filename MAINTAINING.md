@@ -64,16 +64,16 @@ Run from a clean `main` with Node ≥ 22.12 (or prefix commands with
 ```sh
 # 1. Version and changelog
 #    Edit CHANGELOG.md: move [Unreleased] entries under the new version and date.
-npm version 1.0.1 --no-git-tag-version
-git commit -am "chore: release 1.0.1"
-git tag v1.0.1
+npm version 1.1.0 --no-git-tag-version
+git commit -am "chore: release 1.1.0"
+git tag -a v1.1.0 -m "v1.1.0"   # annotated: --follow-tags skips lightweight tags
 
-# 2. Check what will be published
-npm pack --dry-run          # no example/, no *.tgz, plugin/build present
+# 2. Build the tarball and test that exact file in release builds
+npm pack                    # no example/, no *.tgz, plugin/build present
 
 # 3. Publish (npm asks you to approve with your passkey)
-npm publish --access public                 # stable → latest
-npm publish --access public --tag next      # pre-release → next
+npm publish react-native-keys-next-1.1.0.tgz --access public              # stable → latest
+npm publish react-native-keys-next-1.1.0.tgz --access public --tag next   # pre-release → next
 
 # 4. Push
 git push origin main --follow-tags
