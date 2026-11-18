@@ -16,7 +16,7 @@
 > - iOS: secure values are decoded as UTF-8 (non-ASCII secrets were garbled before), and a missing key returns `""` (same as Android) instead of crashing on a non-string value.
 > - `secureFor()` called without a string key throws a JS error instead of reading out of bounds.
 >
-> **Tested** (release builds, secure + public keys verified at runtime; iOS 27 simulator, Android 13 on a Galaxy A51, Android 16 emulator for 0.88):
+> **Tested** (release builds, secure + public keys verified at runtime; iOS 27 simulator and Android 13 on a Galaxy A51 for 0.75 – 0.87; 0.88.1 and 0.75.5 also on an iPhone SE (iOS 27.2) and a Moto g73 (Android 14)):
 >
 > | React Native | Architecture | iOS | Android |
 > | --- | --- | --- | --- |

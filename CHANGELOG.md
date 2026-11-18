@@ -6,8 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-18
+
+No code changes. This release marks React Native 0.88 as supported.
+
 ### Added
-- Verified on React Native 0.88.1 (iOS and Android release builds, New Architecture). No code changes were needed.
+- Verified on React Native 0.88.1 (iOS and Android release builds, New Architecture), on the iOS 27
+  simulator, an Android 16 emulator, an iPhone SE (iOS 27.2) and a Moto g73 (Android 14).
+- Re-verified the oldest supported version, 0.75.5 (New and Old Architecture), on the iOS simulator, the iPhone SE and the Moto g73.
 
 ## [1.0.0] - 2026-10-06
 
@@ -40,6 +46,7 @@ First release of the fork of [react-native-keys](https://github.com/numandev1/re
 - iOS: a missing key returns `""` (as on Android) instead of crashing.
 - `secureFor()` without a string argument throws a JS error instead of reading out of bounds.
 
-[Unreleased]: https://github.com/the-mysterious-kid/react-native-keys-next/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/the-mysterious-kid/react-native-keys-next/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/the-mysterious-kid/react-native-keys-next/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/the-mysterious-kid/react-native-keys-next/compare/v1.0.0-beta.1...v1.0.0
 [1.0.0-beta.1]: https://github.com/the-mysterious-kid/react-native-keys-next/releases/tag/v1.0.0-beta.1
